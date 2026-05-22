@@ -8,6 +8,20 @@ Microsoft Edge 신경망 TTS(edge-tts)로 **자막 파일(.srt/.vtt) 또는 일�
 
 ---
 
+## 최신 버전 다운로드
+
+| 버전 | 배포일 | 설치 파일 | 소스코드 |
+|---|---|---|---|
+| **v0.1.0** | 2026-05-22 | [Voxsave_0.1.0_x64-setup.exe](https://github.com/cflab2017/Tool_Voxsave/releases/download/v0.1.0/Voxsave_0.1.0_x64-setup.exe) (12.0 MB) | [v0.1.0 source (zip)](https://github.com/cflab2017/Tool_Voxsave/archive/refs/tags/v0.1.0.zip) · [tar.gz](https://github.com/cflab2017/Tool_Voxsave/archive/refs/tags/v0.1.0.tar.gz) |
+
+전체 릴리스 목록: [Releases](https://github.com/cflab2017/Tool_Voxsave/releases)
+
+> **SHA-256** (v0.1.0 setup.exe): `F71334E1AB0011E5D0FBB3DA802A4385294812153EAD0E233C41A9CC6B9177F6`
+>
+> 설치 시 **SmartScreen 경고**가 뜨면 "추가 정보 → 실행"을 누르세요. 코드 서명 안 된 무료 앱이라 정상입니다.
+
+---
+
 ## 사용자(최종 배포 대상)용 — 받은 .exe만 실행하는 사람
 
 ### 시스템 요구사항
