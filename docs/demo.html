@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voxsave — 시연 영상</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Gowun+Dodum&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0a08;
+      --panel: #141210;
+      --panel-2: #1c1916;
+      --border: #2a241d;
+      --amber: #ffb000;
+      --amber-dim: #b87b00;
+      --text: #f3e7cf;
+      --muted: #8a7d63;
+      --success: #5ddc7a;
+      --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+      --kor: "Gowun Dodum", "Malgun Gothic", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; min-height: 100vh;
+      background: #050403;
+      color: var(--text);
+      font-family: var(--kor);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 24px;
+    }
+
+    .caption {
+      font-family: var(--mono); font-size: 13px;
+      color: var(--amber-dim); text-align: center;
+      margin-bottom: 18px; min-height: 20px;
+      letter-spacing: 0.06em;
+    }
+
+    .window {
+      width: min(960px, 100%);
+      background: var(--bg);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px var(--border),
+        0 30px 80px rgba(255,176,0,0.08),
+        0 8px 24px rgba(0,0,0,0.6);
+      position: relative;
+    }
+    .titlebar {
+      background: #1a1814;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 8px 14px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .titlebar::before {
+      content: "●"; color: #4a78ff; font-size: 12px;
+    }
+    .titlebar .controls {
+      margin-left: auto;
+      display: flex; gap: 14px;
+      color: var(--muted);
+      font-family: monospace;
+    }
+
+    .scanlines {
+      position: absolute; inset: 32px 0 0 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,176,0,0.03) 0px,
+        rgba(255,176,0,0.03) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      z-index: 10;
+      mix-blend-mode: screen;
+    }
+
+    .app-content {
+      padding: 24px 28px 18px;
+      position: relative;
+    }
+    .brand {
+      display: flex; align-items: baseline; gap: 12px;
+      font-family: var(--mono);
+    }
+    .brand .prompt { color: var(--amber-dim); font-size: 20px; }
+    .brand h1 {
+      margin: 0; font-size: 26px; letter-spacing: 0.16em;
+      color: var(--amber);
+      text-shadow: 0 0 8px rgba(255,176,0,0.4);
+    }
+    .cursor {
+      display: inline-block; margin-left: 4px;
+      color: var(--amber);
+      animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .tagline {
+      margin: 4px 0 18px 22px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .tabs {
+      display: flex; border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .tab {
+      background: transparent; border: none;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 10px 16px;
+      cursor: default;
+      border-bottom: 2px solid transparent;
+      transition: all .3s;
+    }
+    .tab.is-active {
+      color: var(--amber);
+      border-bottom-color: var(--amber);
+      text-shadow: 0 0 6px rgba(255,176,0,0.3);
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 14px;
+      margin-bottom: 14px;
+      min-height: 130px;
+    }
+    .lbl {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .textarea-mock {
+      width: 100%; min-height: 90px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .typed-cursor {
+      display: inline-block;
+      width: 8px; height: 1.1em;
+      background: var(--amber);
+      vertical-align: text-bottom;
+      animation: blink 1s steps(1) infinite;
+      margin-left: 2px;
+    }
+
+    .dropzone {
+      border: 1px dashed var(--border);
+      border-radius: 4px;
+      padding: 22px;
+      text-align: center;
+      transition: all .3s;
+    }
+    .dropzone.is-drag {
+      background: rgba(255,176,0,0.06);
+      border-color: var(--amber-dim);
+    }
+    .dz-title { margin: 0 0 4px; color: var(--text); font-size: 13px; }
+    .dz-sub { margin: 0; color: var(--muted); font-family: var(--mono); font-size: 11px; }
+
+    .controls-row {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .ctl { display: flex; flex-direction: column; gap: 6px; }
+    .ctl label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      display: flex; justify-content: space-between;
+    }
+    .ctl .val { color: var(--amber); }
+    .ctl select, .ctl .range {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 6px 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      height: 30px;
+    }
+    .range { position: relative; }
+    .range-track {
+      height: 4px; background: var(--border); border-radius: 2px;
+      margin: 11px 4px 0;
+      position: relative;
+    }
+    .range-thumb {
+      position: absolute;
+      width: 14px; height: 14px;
+      background: var(--amber);
+      border-radius: 50%;
+      top: -5px;
+      box-shadow: 0 0 8px rgba(255,176,0,0.5);
+      transition: left .4s ease;
+    }
+
+    .actions {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .btn, .btn-primary, .btn-ghost {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      padding: 9px 16px;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      transition: all .25s;
+    }
+    .btn-primary {
+      background: var(--amber);
+      color: #1a1306;
+      border-color: var(--amber);
+      font-weight: 600;
+    }
+    .btn-ghost { background: transparent; color: var(--muted); }
+    .btn.is-flash {
+      box-shadow: 0 0 16px rgba(255,176,0,0.6);
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+    .btn-primary.is-flash {
+      box-shadow: 0 0 20px rgba(255,176,0,0.8);
+      transform: scale(1.03);
+    }
+
+    .status {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 12px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      min-height: 22px;
+    }
+    .status.success { color: var(--success); }
+    .spinner {
+      width: 12px; height: 12px;
+      border: 2px solid var(--border);
+      border-top-color: var(--amber);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .footer {
+      padding: 10px 28px;
+      border-top: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    /* Save dialog mock overlay */
+    .dialog-overlay {
+      position: absolute; inset: 32px 0 0 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 20;
+    }
+    .dialog-overlay.is-open { display: flex; }
+    .dialog {
+      width: 360px;
+      background: #1c1916;
+      border: 1px solid var(--amber-dim);
+      border-radius: 6px;
+      padding: 18px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+    }
+    .dialog h3 {
+      margin: 0 0 12px;
+      color: var(--amber);
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+    }
+    .dialog .path {
+      background: var(--bg);
+      padding: 8px 10px;
+      border-radius: 3px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+    }
+    .dialog .dialog-actions {
+      display: flex; justify-content: flex-end; gap: 8px;
+    }
+
+    .replay {
+      margin-top: 18px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .replay:hover { color: var(--amber); border-color: var(--amber-dim); }
+
+    .progress-bar {
+      width: min(960px, 100%);
+      height: 3px;
+      background: var(--border);
+      margin-top: 14px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, var(--amber-dim), var(--amber));
+      width: 0%;
+      transition: width .3s linear;
+    }
+  </style>
+</head>
+<body>
+  <div class="caption" id="caption">시연 영상 시작…</div>
+
+  <div class="window">
+    <div class="titlebar">
+      <span>Voxsave — 자막/텍스트 → MP3</span>
+      <span class="controls">─ ▢ ✕</span>
+    </div>
+    <div class="scanlines"></div>
+
+    <div class="app-content">
+      <div class="brand">
+        <span class="prompt">&gt;_</span>
+        <h1>VOXSAVE<span class="cursor">▌</span></h1>
+      </div>
+      <p class="tagline">자막·텍스트 → MP3 / Microsoft Edge 신경망 TTS</p>
+
+      <div class="tabs">
+        <button class="tab is-active" id="tab-text">[01] 텍스트</button>
+        <button class="tab" id="tab-sub">[02] 자막파일 (.srt / .vtt)</button>
+      </div>
+
+      <div class="panel" id="panel-text">
+        <span class="lbl">입력 텍스트</span>
+        <div class="textarea-mock"><span id="typed"></span><span class="typed-cursor" id="caret"></span></div>
+      </div>
+
+      <div class="panel" id="panel-sub" style="display:none;">
+        <div class="dropzone" id="dz">
+          <p class="dz-title" id="dz-title">자막 파일을 끌어다 놓거나 클릭하여 선택</p>
+          <p class="dz-sub" id="dz-sub">.srt · .vtt (UTF-8)</p>
+        </div>
+        <div class="textarea-mock" id="sub-out" style="margin-top:12px; min-height:60px; font-size:13px; color: var(--text);"></div>
+      </div>
+
+      <div class="controls-row">
+        <div class="ctl">
+          <label>음성</label>
+          <select disabled><option>SunHi · 여성</option></select>
+        </div>
+        <div class="ctl">
+          <label>속도 <span class="val" id="rate-val">+0%</span></label>
+          <div class="range"><div class="range-track"><div class="range-thumb" id="rate-thumb" style="left:33%"></div></div></div>
+        </div>
+        <div class="ctl">
+          <label>음높이 <span class="val" id="pitch-val">+0Hz</span></label>
+          <div class="range"><div class="range-track"><div class="range-thumb" id="pitch-thumb" style="left:50%"></div></div></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="btn-preview">▶ 미리듣기</button>
+        <button class="btn-ghost" id="btn-stop">■ 정지</button>
+        <button class="btn-primary" id="btn-save">⬇ MP3로 저장</button>
+      </div>
+
+      <div class="status" id="status"><span id="status-text">준비됨</span><span class="spinner" id="spinner" style="display:none;"></span></div>
+    </div>
+
+    <div class="footer">Tauri 환경 · edge-tts 사용 가능</div>
+
+    <div class="dialog-overlay" id="dialog">
+      <div class="dialog">
+        <h3>MP3 저장 위치 선택</h3>
+        <div class="path" id="dialog-path">D:\내음성\introduction.mp3</div>
+        <div class="dialog-actions">
+          <button class="btn-ghost">취소</button>
+          <button class="btn-primary" id="dialog-save">저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+  <button class="replay" id="replay">↻ 다시 재생</button>
+
+<script>
+const $ = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+const SCENARIO = [
+  // Scene 1: text-to-mp3
+  {
+    caption: "Scene 1 / 텍스트 → MP3",
+    duration: 18000,
+    actions: [
+      { at: 200, fn: async () => setStatus("준비됨", false) },
+      { at: 600, fn: async () => typeText("typed", "안녕하세요. 오늘은 Voxsave로\n한국어 음성을 만드는 방법을\n알려드립니다.", 50) },
+      { at: 5500, fn: async () => flashButton("btn-preview", "미리듣기 생성 중… (edge-tts, ko-KR-SunHiNeural)") },
+      { at: 7000, fn: async () => { showSpinner(true); } },
+      { at: 8500, fn: async () => { showSpinner(false); setStatus("미리듣기 재생 중 — 38자 (ko-KR-SunHiNeural)", false); } },
+      { at: 11000, fn: async () => setStatus("미리듣기 완료", true) },
+      { at: 12500, fn: async () => flashButton("btn-save", "저장 다이얼로그 열기…") },
+      { at: 13500, fn: async () => showDialog(true, "D:\\내음성\\introduction.mp3") },
+      { at: 15000, fn: async () => { flashButton("dialog-save", "MP3 생성 중… (38자, ko-KR-SunHiNeural)"); showDialog(false); showSpinner(true); } },
+      { at: 17000, fn: async () => { showSpinner(false); setStatus("저장 완료: D:\\내음성\\introduction.mp3", true); } },
+    ],
+  },
+  // Scene 2: SRT subtitle drop
+  {
+    caption: "Scene 2 / 자막 파일(.srt) → MP3",
+    duration: 14000,
+    actions: [
+      { at: 100, fn: async () => { switchTab("sub"); setStatus("준비됨", false); $("sub-out").textContent = ""; $("typed").textContent = ""; } },
+      { at: 1000, fn: async () => { $("dz").classList.add("is-drag"); $("dz-title").textContent = "movie_subs.srt"; $("dz-sub").textContent = "파일 인식 중…"; } },
+      { at: 2500, fn: async () => { $("dz").classList.remove("is-drag"); $("dz-title").textContent = "자막 파일을 끌어다 놓거나 클릭하여 선택"; $("dz-sub").textContent = ".srt · .vtt (UTF-8)"; setStatus("자막 로드됨: movie_subs.srt (큐 412개)", false); } },
+      { at: 3500, fn: async () => typeText("sub-out", "어둠 속에서 그가 다가왔다\n나는 숨을 죽이고 기다렸다\n그의 발걸음 소리가 점점 가까워졌다\n…\n(412개 큐, 5,847자 추출됨)", 25) },
+      { at: 9000, fn: async () => flashButton("btn-save", "긴 자막 → MP3 변환 시작") },
+      { at: 10000, fn: async () => { showDialog(true, "D:\\더빙\\movie_dub.mp3"); } },
+      { at: 11200, fn: async () => { flashButton("dialog-save", ""); showDialog(false); showSpinner(true); setStatus("MP3 생성 중… (5,847자)", false); } },
+      { at: 13500, fn: async () => { showSpinner(false); setStatus("저장 완료: D:\\더빙\\movie_dub.mp3", true); } },
+    ],
+  },
+];
+
+let timers = [];
+function clearAll() {
+  timers.forEach(clearTimeout);
+  timers = [];
+}
+
+function setStatus(text, success) {
+  const s = $("status"), t = $("status-text");
+  t.textContent = text;
+  s.classList.toggle("success", !!success);
+}
+
+function showSpinner(on) {
+  $("spinner").style.display = on ? "inline-block" : "none";
+}
+
+async function typeText(elId, text, perChar) {
+  const el = $(elId);
+  el.textContent = "";
+  for (const c of text) {
+    el.textContent += c;
+    await sleep(perChar);
+  }
+}
+
+function flashButton(id, caption) {
+  const b = $(id);
+  b.classList.add("is-flash");
+  if (caption) setStatus(caption, false);
+  setTimeout(() => b.classList.remove("is-flash"), 600);
+}
+
+function switchTab(which) {
+  const onText = which === "text";
+  $("tab-text").classList.toggle("is-active", onText);
+  $("tab-sub").classList.toggle("is-active", !onText);
+  $("panel-text").style.display = onText ? "" : "none";
+  $("panel-sub").style.display = onText ? "none" : "";
+}
+
+function showDialog(on, path) {
+  const d = $("dialog");
+  if (on) {
+    if (path) $("dialog-path").textContent = path;
+    d.classList.add("is-open");
+  } else {
+    d.classList.remove("is-open");
+  }
+}
+
+let totalElapsed = 0;
+let totalDuration = SCENARIO.reduce((a, s) => a + s.duration, 0);
+
+function runScene(idx, sceneStart) {
+  const scene = SCENARIO[idx];
+  $("caption").textContent = scene.caption;
+  if (idx === 0) {
+    switchTab("text");
+    $("typed").textContent = "";
+    $("sub-out").textContent = "";
+    setStatus("준비됨", false);
+    showSpinner(false);
+    showDialog(false);
+  }
+  for (const a of scene.actions) {
+    timers.push(setTimeout(a.fn, a.at));
+  }
+  // progress bar
+  const startTotal = sceneStart;
+  const progressTick = setInterval(() => {
+    const now = performance.now() - playStartedAt;
+    const pct = Math.min(100, (now / totalDuration) * 100);
+    $("progress").style.width = pct + "%";
+    if (pct >= 100) clearInterval(progressTick);
+  }, 100);
+  timers.push({clear: () => clearInterval(progressTick)});
+
+  timers.push(setTimeout(() => {
+    if (idx + 1 < SCENARIO.length) runScene(idx + 1, sceneStart + scene.duration);
+    else timers.push(setTimeout(() => {
+      $("caption").textContent = "✓ 시연 종료 — 아래 ↻ 버튼으로 다시 재생";
+      $("progress").style.width = "100%";
+    }, 500));
+  }, scene.duration));
+}
+
+let playStartedAt;
+function play() {
+  clearAll();
+  $("progress").style.width = "0%";
+  playStartedAt = performance.now();
+  runScene(0, 0);
+}
+
+$("replay").addEventListener("click", play);
+play();
+</script>
+</body>
+</html>

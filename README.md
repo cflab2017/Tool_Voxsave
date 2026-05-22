@@ -1,5 +1,7 @@
 # Voxsave — 자막/텍스트 → MP3
 
+![Voxsave 실행 화면](docs/Voxsave.png)
+
 Microsoft Edge 신경망 TTS(edge-tts)로 **자막 파일(.srt/.vtt) 또는 일반 텍스트를 MP3 음성 파일로 저장**하는 Windows 데스크탑 앱입니다. API 키 불필요, 한국어 음질 우수.
 
 - **프레임워크**: Tauri v2 (Rust + WebView2)
