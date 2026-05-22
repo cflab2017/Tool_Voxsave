@@ -1,0 +1,32 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:allow-save",
+    "dialog:allow-open",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "binaries/edge-tts-sidecar",
+          "sidecar": true,
+          "args": [
+            "--textfile",
+            { "validator": "\\S+" },
+            "--voice",
+            { "validator": "[A-Za-z0-9\\-]+" },
+            "--rate",
+            { "validator": "[+-]?\\d{1,3}%" },
+            "--pitch",
+            { "validator": "[+-]?\\d{1,3}Hz" },
+            "--out",
+            { "validator": "\\S+" }
+          ]
+        }
+      ]
+    }
+  ]
+}

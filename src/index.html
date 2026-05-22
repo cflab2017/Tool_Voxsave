@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voxsave — 자막/텍스트 → MP3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Gowun+Dodum&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="./main.js" defer></script>
+  </head>
+  <body>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <header class="app-header">
+      <div class="brand">
+        <span class="prompt">&gt;_</span>
+        <h1>VOXSAVE<span class="cursor">▌</span></h1>
+      </div>
+      <p class="tagline">자막·텍스트 → MP3 / Microsoft Edge 신경망 TTS</p>
+    </header>
+
+    <main class="app">
+      <nav class="tabs" role="tablist">
+        <button class="tab is-active" data-tab="text" role="tab" aria-selected="true">
+          [01] 텍스트
+        </button>
+        <button class="tab" data-tab="sub" role="tab" aria-selected="false">
+          [02] 자막파일 (.srt / .vtt)
+        </button>
+      </nav>
+
+      <section id="panel-text" class="panel is-active" role="tabpanel">
+        <label for="text-input" class="lbl">입력 텍스트</label>
+        <textarea
+          id="text-input"
+          rows="10"
+          placeholder="여기에 변환할 텍스트를 입력하세요…"
+        ></textarea>
+      </section>
+
+      <section id="panel-sub" class="panel" role="tabpanel" hidden>
+        <div id="dropzone" class="dropzone">
+          <p class="dz-title">자막 파일을 끌어다 놓거나 클릭하여 선택</p>
+          <p class="dz-sub">.srt · .vtt (UTF-8)</p>
+          <input id="file-input" type="file" accept=".srt,.vtt,text/plain" hidden />
+        </div>
+        <label for="sub-output" class="lbl">추출된 대사</label>
+        <textarea
+          id="sub-output"
+          rows="8"
+          placeholder="자막을 불러오면 타임코드/태그를 제거한 대사가 여기에 표시됩니다."
+        ></textarea>
+        <div class="sub-meta">
+          <span id="sub-stats">큐 0개 · 0자</span>
+          <button id="sub-clear" class="btn-ghost" type="button">지우기</button>
+        </div>
+      </section>
+
+      <section class="controls">
+        <div class="control">
+          <label for="voice">음성</label>
+          <select id="voice">
+            <optgroup label="한국어">
+              <option value="ko-KR-SunHiNeural" selected>SunHi · 여성</option>
+              <option value="ko-KR-InJoonNeural">InJoon · 남성</option>
+              <option value="ko-KR-HyunsuMultilingualNeural">Hyunsu · 다국어</option>
+            </optgroup>
+            <optgroup label="English (US)">
+              <option value="en-US-AriaNeural">Aria · 여성</option>
+              <option value="en-US-GuyNeural">Guy · 남성</option>
+              <option value="en-US-JennyNeural">Jenny · 여성</option>
+            </optgroup>
+            <optgroup label="日本語">
+              <option value="ja-JP-NanamiNeural">Nanami · 女性</option>
+              <option value="ja-JP-KeitaNeural">Keita · 男性</option>
+            </optgroup>
+            <optgroup label="中文">
+              <option value="zh-CN-XiaoxiaoNeural">Xiaoxiao · 女</option>
+              <option value="zh-CN-YunxiNeural">Yunxi · 男</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="control">
+          <label for="rate">속도 <span id="rate-val" class="val">+0%</span></label>
+          <input id="rate" type="range" min="-50" max="100" value="0" step="1" />
+        </div>
+
+        <div class="control">
+          <label for="pitch">음높이 <span id="pitch-val" class="val">+0Hz</span></label>
+          <input id="pitch" type="range" min="-50" max="50" value="0" step="1" />
+        </div>
+      </section>
+
+      <section class="actions">
+        <button id="preview-btn" class="btn" type="button">▶ 미리듣기</button>
+        <button id="stop-btn" class="btn-ghost" type="button">■ 정지</button>
+        <button id="save-btn" class="btn-primary" type="button" disabled>
+          ⬇ MP3로 저장
+        </button>
+      </section>
+
+      <section class="status">
+        <div id="status" class="status-text">준비됨</div>
+        <div id="spinner" class="spinner" hidden></div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span class="meta" id="env-note">Tauri 환경 감지 중…</span>
+    </footer>
+  </body>
+</html>

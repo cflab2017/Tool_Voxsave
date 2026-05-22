@@ -1,0 +1,21 @@
+[package]
+name = "voxsave"
+version = "0.1.0"
+description = "Subtitle / text to MP3 desktop app using Microsoft Edge neural TTS"
+authors = ["joseph.han"]
+edition = "2021"
+
+[lib]
+name = "voxsave_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-shell = "2"
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+base64 = "0.22"
