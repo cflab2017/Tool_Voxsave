@@ -2,6 +2,10 @@
 
 ![Voxsave 실행 화면](docs/Voxsave.png)
 
+🎙️ **사용법 가이드·다운로드** — [https://coding-now.com/voxsave](https://coding-now.com/voxsave)
+ 자막·텍스트를 한국어 MP3 로 변환하는 무료 Windows 도구. Coding Now 의
+ 도구 페이지에서 데모와 함께 빠른 시작 가이드를 확인하세요.
+ 
 Microsoft Edge 신경망 TTS(edge-tts)로 **자막 파일(.srt/.vtt) 또는 일반 텍스트를 MP3 음성 파일로 저장**하는 Windows 데스크탑 앱입니다. API 키 불필요, 한국어 음질 우수.
 
 - **프레임워크**: Tauri v2 (Rust + WebView2)
